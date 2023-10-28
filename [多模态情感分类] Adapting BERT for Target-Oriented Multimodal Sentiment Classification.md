@@ -46,8 +46,9 @@
 
 接下来，让我们简要回顾一下 BERT 模型 ，它本质上是一个多层双向 Transformer 编码器，如图 2.a 的句子编码器部分所示。为了捕获全局信息，首先使用 m-head self-attention 层将输入序列中的每个位置转换为输入层的加权和。具体来说，对于第 $i$ 个头部注意力，输入层 $\mathbf{X}\in\mathbb{R}^{d\times N}$ 基于点积注意力机制进行变换，如下所示：
 
+$$
 $$\mathrm{ATT}_i(\mathbf{X})=\mathrm{softmax}(\frac{[\mathbf{W}_{\mathbf{Q}_i}\mathbf{X}]^\top[\mathbf{W}_{\mathbf{K}_i}\mathbf{X}]}{\sqrt{d/m}})[\mathbf{W}_{\mathbf{V}_i}\mathbf{X}]^\top $$
-
+$$
 其中 $\{\mathbf{W}_{\mathbf{Q}_i},\mathbf{W}_{\mathbf{K}_i},\mathbf{W}_{\mathbf{V}_i}\}\in\mathbb{R}^{d/m\times d}$分别是对应于查询、键和值的可学习参数。然后，将 $m$ 个注意力机制的输出连接在一起，然后进行线性变换，如下所示：
 
 $$\text{МАТТ}(\mathbf{X})=\mathbf{W}_m[\text{АТТ}_1(\mathbf{X}),\ldots,\text{АТТ}_m(\mathbf{X})]^\top $$
@@ -118,8 +119,9 @@ $$\mathbf{H=ME(H_V,H_S)}\quad\mathrm{or}\quad\mathbf{H=ME(H_V^0,H_S)}$$
 
 最后，我们将$\mathbf{O}$馈送到线性函数，然后是用于面向目标的情感分类的 softmax 函数：
 
-$$p(y|\mathbf{O})=\text{softmax}(\mathbf{W}^\top\mathbf{O})$$
-
+$$
+p(y|\mathbf{O})=\text{softmax}(\mathbf{W}^\top\mathbf{O})
+$$
 其中 $\mathbf{W}\in\mathbb{R}^{(2)d\times3}$ 是可学习的参数。
 为了优化 TomBERT 模型中的所有参数，目标是最小化标准交叉熵损失函数，如下所示：
 
