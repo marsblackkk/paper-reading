@@ -14,7 +14,7 @@
     - 由于句子的简短和非正式的自然，有时很难检测到焦点目标的情绪，但相关的图像可能有助于反映用户对焦点目标的情绪（例如，在图 1 中，第 20 位国际人工智能联合会议 (IJCAI-19)5408 名用户的建议分别发布了 Georgina Hermitage 的愉快图像和 Joe Arpaio 的不愉快图像）。
     - 对于那些剩余的目标，句子通常表达对它们的中性情绪，图像也倾向于较少甚至不关注它们（例如，图 1 中的 400m T37 和亚利桑那州）。因此，探索如何构建意见目标和文本/视觉内容之间的对齐来对模态内动态进行建模会很有趣，然后融合文本和视觉表示以在统一的模型中揭示它们的模态间对齐面向目标的多模态情感分类 (TMSC)。
 
-<img src="https://mayrain.space/upload/paper/image.png" alt="image.png" style="zoom:50%;" />
+<img src="https://mayrain.space//upload/paper/image.png" alt="image.png" style="zoom: 67%;" />
 为了解决这两个限制，在本文中，我们在最近的 BERT 架构之上构建了我们的模型，其来自大型语料库的预训练模型参数可以帮助获得上下文化的词表示，其 Transformer 编码器中使用的**多头自注意力机制**可以自动学习任意两个复杂对象之间的不同级别的对齐。
 
 - 具体来说，我们首先将每个输入句子转换为两个子句：单个意见目标词和剩余的上下文词，并使用 BERT 来获得目标敏感的文本表示。
@@ -46,9 +46,8 @@
 
 接下来，让我们简要回顾一下 BERT 模型 ，它本质上是一个多层双向 Transformer 编码器，如图 2.a 的句子编码器部分所示。为了捕获全局信息，首先使用 m-head self-attention 层将输入序列中的每个位置转换为输入层的加权和。具体来说，对于第 $i$ 个头部注意力，输入层 $\mathbf{X}\in\mathbb{R}^{d\times N}$ 基于点积注意力机制进行变换，如下所示：
 
-$$
 $$\mathrm{ATT}_i(\mathbf{X})=\mathrm{softmax}(\frac{[\mathbf{W}_{\mathbf{Q}_i}\mathbf{X}]^\top[\mathbf{W}_{\mathbf{K}_i}\mathbf{X}]}{\sqrt{d/m}})[\mathbf{W}_{\mathbf{V}_i}\mathbf{X}]^\top $$
-$$
+
 其中 $\{\mathbf{W}_{\mathbf{Q}_i},\mathbf{W}_{\mathbf{K}_i},\mathbf{W}_{\mathbf{V}_i}\}\in\mathbb{R}^{d/m\times d}$分别是对应于查询、键和值的可学习参数。然后，将 $m$ 个注意力机制的输出连接在一起，然后进行线性变换，如下所示：
 
 $$\text{МАТТ}(\mathbf{X})=\mathbf{W}_m[\text{АТТ}_1(\mathbf{X}),\ldots,\text{АТТ}_m(\mathbf{X})]^\top $$
@@ -67,7 +66,7 @@ $$\operatorname{BT}(\mathbf{X})=\operatorname{LN}(\mathbf{X}+\operatorname{MLP}(
 
 ## 3.3 多模态BERT（mBERT）
 mBERT模型提出的将图像纳入BERT架构的一个解决方案是直接将图像特征与获取目标敏感的文本特征连接起来，然后再上面堆叠额外的BERT层来模拟视觉和文本之间的模态间互动。下图为mBERT 的框架图：
-<img src="https://mayrain.space//upload/paper/image-dycq.png" alt="image-dycq.png" style="zoom:50%;" />
+<img src="https://mayrain.space//upload/paper/image-dycq.png" alt="image-dycq.png" style="zoom:67%;" />
 具体来说，对于相关的图像 $I$，我们首先将其调整为 224×224 像素，然后采用最先进的图像识别模型 ResNet-152 (res5c) 来获得最后一个卷积层的输出：
 
 $$\mathbf{ResNet}(\mathbf{I})=\{\mathbf{r}_j|\mathbf{r}_j\in\mathbb{R}^{2048},j=1,2,...,49\}$$
@@ -119,9 +118,8 @@ $$\mathbf{H=ME(H_V,H_S)}\quad\mathrm{or}\quad\mathbf{H=ME(H_V^0,H_S)}$$
 
 最后，我们将$\mathbf{O}$馈送到线性函数，然后是用于面向目标的情感分类的 softmax 函数：
 
-$$
-p(y|\mathbf{O})=\text{softmax}(\mathbf{W}^\top\mathbf{O})
-$$
+$$p(y|\mathbf{O})=\text{softmax}(\mathbf{W}^\top\mathbf{O})$$
+
 其中 $\mathbf{W}\in\mathbb{R}^{(2)d\times3}$ 是可学习的参数。
 为了优化 TomBERT 模型中的所有参数，目标是最小化标准交叉熵损失函数，如下所示：
 
@@ -147,7 +145,7 @@ $$\begin{aligned}\mathcal{J}&=-\frac{1}{|D|}\sum_{j=1}^{|D|}\log p(y^{(j)}|\math
 为了证明微调 BERT 对 TSC 的影响，我们首先将其与许多代表性方法进行比较：1）SVM，包括许多精心设计的语言特征； 2）AE-LSTM，结合方面嵌入和特定于目标的注意力机制； 3）TD-LSTM ，使用两个 LSTM 分别对目标的左侧上下文和右侧上下文进行建模； 4）。IAN ，提出了一种交互式注意机制来模拟目标和上下文之间的交互； 5）MemNet ，在词嵌入之上应用多跳注意机制，并以目标作为查询的位置嵌入； 6）RAM ，通过在从多跳注意力机制获得的表示之上应用 GRU 模型来构建神经架构； 7）TNet ，将 CNN 与特定于目标的转换进行调整以整合目标和上下文； 8）MGAN ，建立了一个多粒度注意力网络来融合目标和上下文。
 我们在表 3 中的所有五个数据集和表 4 的文本模态部分报告了基于文本的方法的准确度 (ACC) 和 Macro-F1 分数。很容易发现 BERT 始终优于所有基线，这支持了我们的第一个动机，即预训练模型可以导致更好的最优解，从而为 TSC 带来改进。
 
-<img src="https://mayrain.space//upload/paper/image-cfpo.png" alt="image-cfpo.png"  />
+<img src="https://mayrain.space/upload/paper/image-cfpo.png" alt="image-cfpo.png" style="zoom:67%;" />
 
 **TomBERT (RQ2)的性能**
 
@@ -161,7 +159,7 @@ $$\begin{aligned}\mathcal{J}&=-\frac{1}{|D|}\sum_{j=1}^{|D|}\log p(y^{(j)}|\math
 5）mBERT 关联图像输入句子和预测标签关联和 mPBERT 在大多数情况下可以优于 BERT+BL，并且通常比 Res-BERT+BL-TFN 具有更好的性能，这表明顶部多模态编码器可以很好地捕获模态间交互； 
 6）最后，无论我们使用的连接和池化类型如何，TomBERT 在 e 个两个数据集上都取得了最佳结果，并且这些增益中的大多数都是显着的，p<0.05。这些观察结果支持了我们的第二个动机，即 TomBERT 可以很好地捕获模态内和模态间动态。
 
-<img src="https://mayrain.space//upload/paper/image-qccp.png" alt="image-qccp.png" style="zoom:50%;" />
+<img src="https://mayrain.space/upload/paper/image-qccp.png" alt="image-qccp.png" style="zoom:67%;" />
 
 ## 4.3 TomBERT (RQ3)的进一步分析
 为了回答 RQ3 中的问题，我们研究了 mBERT 和 TomBERT 中不同组件的影响。
@@ -176,7 +174,7 @@ $$\begin{aligned}\mathcal{J}&=-\frac{1}{|D|}\sum_{j=1}^{|D|}\log p(y^{(j)}|\math
 为了更好地理解TomBERT的优势，我们进一步将单目标和多个目标的测试句子分为两类，并在表6中报告了它们的结果。很容易观察到，当输入句子有多个目标时，TomBERT的性能明显优于BERT+BL和mPBERT，这与我们的动机一致。
 此外，我们选择了几个具有代表性的测试样本来比较不同方法的预测。在表 5 的左边，我们可以看到尽管 BERT+BL 和 mPBERT 错误地预测了 IKON 和 SG 的情绪。在图像的帮助下，我们的 TomBERT 模型可以识别推文的重点是 SG 以外的波段 IKON，因此预测聚焦目标 IKON 的情绪为正，其他目标 SG 为中性。表 5 右侧的目标 Henry Ford 和 Getty 图像也可以进行了类似的观察。
 
-![image-iozs.png](https://mayrain.space//upload/paper/image-iozs.png)
+![image-iozs.png](https://mayrain.space/upload/paper/image-iozs.png)
 
 # 结论
 在本文中，我们研究了面向目标的多模态情感分类 (TMSC)，并提出了一种面向目标的多模态 BERT (TomBERT) 架构来有效地捕获模态内和模态间动态。对 TSC 和 TMSC 的五个数据集的广泛评估表明 BERT 和我们的 TomBERT 模型在检测单个意见目标的情感极性方面是有效的。
